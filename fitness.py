@@ -14,8 +14,8 @@ class FitnessCalculator(object):
         self._persons_stats = self.statistic_data_about_persons()
 
     @property
-    def persons_stats(self):
-        """Returns: self._persons_stats"""
+    def persons_stats(self) -> dict:
+        """Returns: (dict): static table data about persons"""
         return self._persons_stats
 
     def statistic_data_about_persons(self) -> dict:
@@ -25,6 +25,7 @@ class FitnessCalculator(object):
         Returns:
             (dict): persons data as a tree representation
         """
+
         def __fill_data(crit, data):
             """Fill static_data; enumerate values. Using dict.setdefault()
 
@@ -58,24 +59,25 @@ class FitnessCalculator(object):
         for coeval in generation:
             penalty = 0
             for crit in criteria:
-                penalty += self._fitness_of_coeval(coeval, crit)
+                penalty += self.__fitness_of_coeval(coeval, crit)
             # 1/(penalty+1) - keeps the fitness between <0, 1>
-            fitness_of_coeval = round(1/(penalty+1), 4)
+            fitness_of_coeval = round(1 / (penalty + 1), 4)
             result.append((fitness_of_coeval, coeval))
         result.sort(key=lambda tup: tup[0], reverse=True)
         return result
 
-    def _fitness_of_coeval(self, coeval, criteria) -> int:
+    def __fitness_of_coeval(self, coeval, criteria) -> int:
         """Calculate penalty of coeval based on one criteria.
 
         Args:
             coeval (dict): random grouping of persons
             criteria (list): two values [criteria(str),
-                                         specific criteria(str)]
+                                         specific criteria(str),
+                                         weight value (float)<0, 1>]
         Returns:
-            (int): penalty based on one criteria
+            (int): penalty based on one criteria multiplied by weight value
         """
-        def __evaluate_groups_by_criteria() -> list:
+        def __evaluate_by_criteria() -> list:
             """Evaluate how are the criterias divided between groups
             in coeval.
 
@@ -91,25 +93,25 @@ class FitnessCalculator(object):
                     if criteria[0] == "gender":
                         if person.gender == criteria[1]:
                             index += 1
-                    if criteria[0] == "study":
+                    elif criteria[0] == "study":
                         if person.study == criteria[1]:
                             index += 1
-                    if criteria[0] == "university":
+                    elif criteria[0] == "university":
                         if person.university == criteria[1]:
                             index += 1
-                    if criteria[0] == "nationality":
+                    elif criteria[0] == "nationality":
                         if person.nationality == criteria[1]:
                             index += 1
-                    if criteria[0] == "transport":
+                    elif criteria[0] == "transport":
                         if person.transport == criteria[1]:
                             index += 1
                 arranged.append(index)
             return arranged
+        # TODO need to add distance matrix, and group size calculations
+        values = __evaluate_by_criteria()
         penalty = 0
-        c_0 = criteria[0]
-        c_1 = criteria[1]
-        evaluated = __evaluate_groups_by_criteria()
-        for number in evaluated:
-            value = self._persons_stats[c_0][c_1] / self.__group_size
-            penalty += abs(value-number)
-        return penalty
+        for number in values:
+            div = self._persons_stats[criteria[0]][criteria[1]] / \
+                    self.__group_size
+            penalty += abs(div - number)
+        return penalty * criteria[2]

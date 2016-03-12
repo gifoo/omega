@@ -16,18 +16,17 @@ class FirstGeneration(object):
         self.__cache = persons[:]
         self.__group_size = group_size
         self.__gen_size = gen_size
-        self._error_handler()
+        self.__error_handler()
 
-    @property
     def create_generation(self) -> list:
         """Create starting point for the evolutionary algorithm.
 
         Returns:
              (list): filled with possible groupings
         """
-        return [self.grouping() for index in range(self.__gen_size)]
+        return [self.__grouping() for index in range(self.__gen_size)]
 
-    def grouping(self) -> dict:
+    def __grouping(self) -> dict:
         """Assign persons to group. Yield result.
 
         Returns:
@@ -41,16 +40,16 @@ class FirstGeneration(object):
         self.__persons = self.__cache[:]
         return coeval
 
-    def _error_handler(self):
+    def __error_handler(self):
         """Raise uniqe errors.
 
         Raises:
-            ValueError: - persons are empty
-                        - group size is smaller/equal to zero
-                        - generation size is smaller/equal to 10
+            IOError: - persons are empty
+            ValueError: - group size is smaller/equal to zero
+            ValueError: - generation size is smaller/equal to 10
         """
         if not self.__persons:
-            raise ValueError('Empty persons. Probably did not loaded persons')
+            raise IOError('Empty persons. Probably did not loaded persons')
         if self.__group_size <= 0:
             raise ValueError('Number of groups smaller/equall than 0.')
         # TODO make it modifiable in web app
