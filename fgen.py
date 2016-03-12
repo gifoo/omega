@@ -19,7 +19,7 @@ class FirstGeneration(object):
         self._error_handler()
 
     @property
-    def create_generation(self):
+    def create_generation(self) -> list:
         """Create starting point for the evolutionary algorithm.
 
         Returns:
@@ -27,12 +27,11 @@ class FirstGeneration(object):
         """
         return [self.grouping() for index in range(self.__gen_size)]
 
-    def grouping(self):
+    def grouping(self) -> dict:
         """Assign persons to group. Yield result.
 
         Returns:
-            coeval (dict): keys - group index
-                           values - Person (object)
+            (dict): keys - group_index; values - Person(object)
         """
         coeval = {index: [] for index in range(self.__group_size)}
         while self.__persons:

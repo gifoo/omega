@@ -15,31 +15,25 @@ class FitnessCalculator(object):
 
     @property
     def persons_stats(self):
-        """Returns:
-            self._persons_stats
-        """
+        """Returns: self._persons_stats"""
         return self._persons_stats
 
-    def statistic_data_about_persons(self):
+    def statistic_data_about_persons(self) -> dict:
         """Represent data about persons and count the number of
         different criterias.
 
         Returns:
-            data about persons as a tree representation in a dict
-        Example:
-            {'Gender':
-                {'Male':x(int), 'Female':y(int)}
-            }
+            (dict): persons data as a tree representation
         """
-        def __fill_data(criteria, data):
+        def __fill_data(crit, data):
             """Fill static_data; enumerate values. Using dict.setdefault()
 
             Args:
-                criteria (str): defines allocated keys for criteria
+                crit (str): defines allocated keys for criteria
                 data (object.value): value from Person(object)
             """
-            static_data.setdefault(criteria, dict()).setdefault(data, 0)
-            static_data[criteria][data] += 1
+            static_data.setdefault(crit, dict()).setdefault(data, 0)
+            static_data[crit][data] += 1
         static_data = dict()
         for person in self.__persons:
             __fill_data("gender", person.gender)
@@ -49,13 +43,16 @@ class FitnessCalculator(object):
             __fill_data("transport", person.transport)
         return static_data
 
-    def calculate_fitness(self, generation, criteria):
-        """Calculate the fitness of generation. Sort them by fittest on top.
+    def calculate_fitness(self, generation, criteria) -> list:
+        """Calculate the fitness of generation. Sorted by fittest at top.
 
         Args:
             generation (list): input, filled with coeval(dict)
             criteria (list): contains (list) filled with:
                              [criteria(str), specific_criteria(str)]
+        Returns:
+            (list): calculated fitness of generation, sorted by fittest
+                    at top
         """
         result = []
         for coeval in generation:
@@ -68,7 +65,7 @@ class FitnessCalculator(object):
         result.sort(key=lambda tup: tup[0], reverse=True)
         return result
 
-    def _fitness_of_coeval(self, coeval, criteria):
+    def _fitness_of_coeval(self, coeval, criteria) -> int:
         """Calculate penalty of coeval based on one criteria.
 
         Args:
@@ -78,13 +75,14 @@ class FitnessCalculator(object):
         Returns:
             (int): penalty based on one criteria
         """
-        def __evaluate_groups_by_criteria():
+        def __evaluate_groups_by_criteria() -> list:
             """Evaluate how are the criterias divided between groups
             in coeval.
 
             Returns:
                 (list): how many persons with needed criteria in group;
-                        index in list corresponds to index of group in coeval
+                        index in list corresponds to index of group in
+                        coeval
             """
             arranged = []
             for group in coeval.values():
