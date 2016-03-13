@@ -2,10 +2,9 @@
 from person import Person
 from fgen import FirstGeneration
 from fitness import FitnessCalculator
-from copy import deepcopy
+from mutate import Mutate
 import pprint
 import random
-
 
 PERSONS = [
     Person(['A', 'Vieden', 'Male', 'Computer Science',
@@ -35,6 +34,25 @@ PERSONS = [
 per = PERSONS[:]
 
 
+def weighted_choice(roulette) -> type:
+    """Choose a survivor from roulette (also represents current
+    generation).
+
+    Args:
+        roulette (list): [(chance, coeval),...]
+    Returns:
+        (type): return second value from tuple in roulette
+    """
+    # error bacause of rounding, get more and less than 100%
+    max_percents = sum(chance for chance, coeval in roulette)
+    pick = random.uniform(0, max_percents)
+    current = 0
+    for chance, coeval in roulette:
+        current += chance
+        if current > pick:
+            return coeval
+
+
 class Evolve(object):
     """docstring
 
@@ -58,9 +76,9 @@ class Evolve(object):
         # print(pick)
 
     def __handle_data(self, generation):
-        """"""
+        """docstring"""
         roulette = self.__roulette_by_fitness(generation)
-        chosen = self.weighted_choice(roulette)
+        chosen = weighted_choice(roulette)
         Mutate(self._mutation, [(80, True), (20, False)]).start(chosen)
 
     def __roulette_by_fitness(self, generation) -> list:
@@ -90,87 +108,6 @@ class Evolve(object):
         for fitness, coeval in generation:
             result += fitness
         return result
-
-    @staticmethod
-    def weighted_choice(roulette) -> dict:
-        """Choose a survivor from roulette (also represents current
-        generation).
-
-        Args:
-            roulette (list): [(chance, coeval),...]
-        Returns:
-            (dict): coeval, contains people appointed to groups
-        """
-        # error bacause of rounding, get more and less than 100%
-        max_percents = sum(chance for chance, coeval in roulette)
-        pick = random.uniform(0, max_percents)
-        current = 0
-        for chance, coeval in roulette:
-            current += chance
-            if current > pick:
-                return coeval
-
-
-class Mutate(object):
-    """docstring
-    """
-
-    def __init__(self, mutation_rate, mutation_type_chance):
-        self.mutation_rate = mutation_rate
-        self.mutation_type = mutation_type_chance
-        self.roulette = [(100-mutation_rate, False), (mutation_rate, True)]
-
-    def start(self, original_coeval):
-        """docstring
-
-        Args:
-            original_coeval (dict):
-        """
-        coeval = deepcopy(original_coeval)
-        mutate = Evolve.weighted_choice(self.roulette)
-        if not mutate:
-            return coeval
-        else:
-            mutation_type = Evolve.weighted_choice(self.mutation_type)
-            if mutation_type:
-                return self.__switch_two_persons(coeval)
-            else:
-                pass
-
-    def __switch_two_persons(self, coeval) -> dict:
-        """Switch two persons in a coeval.
-
-        Args:
-            coeval (dict): deep copied value, allows to swap elements
-        Return:
-            (dict): modified coeval, switched 'gens'/persons
-        """
-        first, second = self.__two_random_choices(coeval)
-        g_one = coeval[first]
-        g_two = coeval[second]
-        # select random person from group
-        if len(g_one) and len(g_two):
-            p_one = random.randrange(0, len(g_one))
-            p_two = random.randrange(0, len(g_two))
-            g_one[p_one], g_two[p_two] = g_two[p_two], g_one[p_one]
-        return coeval
-
-    @staticmethod
-    def __two_random_choices(coeval) -> int:
-        """Returns two selected groups. While for two different values.
-
-        Args:
-            coeval(dict): deep copied value
-        Returns:
-            (int), (int):
-        """
-        choice_one = random.choice(list(coeval.keys()))
-        choice_two = random.choice(list(coeval.keys()))
-        # if same selected, try selecting another
-        while choice_one == choice_two:
-            choice_two = random.choice(list(coeval.keys()))
-        return choice_one, choice_two
-
 
 
 if __name__ == "__main__":
