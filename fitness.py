@@ -46,6 +46,43 @@ class FitnessCalculator(object):
             __fill_data("transport", person.transport)
         return static_data
 
+    @staticmethod
+    def __evaluate_by_criteria(coeval, criteria) -> list:
+        """Evaluate how are the criterias divided between groups
+        in coeval. Based on one criteria.
+
+        Args:
+            coeval (dict): random grouping of persons
+            criteria (list): two values [criteria(str),
+                                         specific criteria(str),
+                                         weight value(float)<0, 1>]
+        Returns:
+            (list): how many persons with needed criteria in group;
+                    index in list corresponds to index of group in
+                    coeval
+        """
+        arranged = []
+        for group in coeval.values():
+            index = 0
+            for person in group:
+                if criteria[0] == "gender":
+                    if person.gender == criteria[1]:
+                        index += 1
+                elif criteria[0] == "study":
+                    if person.study == criteria[1]:
+                        index += 1
+                elif criteria[0] == "university":
+                    if person.university == criteria[1]:
+                        index += 1
+                elif criteria[0] == "nationality":
+                    if person.nationality == criteria[1]:
+                        index += 1
+                elif criteria[0] == "transport":
+                    if person.transport == criteria[1]:
+                        index += 1
+            arranged.append(index)
+        return arranged
+
     def calculate_fitness(self, generation, criteria) -> list:
         """Calculate the fitness of generation. Sorted by fittest at top.
 
@@ -83,7 +120,7 @@ class FitnessCalculator(object):
             counted = self.__evaluate_by_criteria(coeval, criteria)
             return self.__calculate_by_criteria(counted, criteria)
         elif criteria[0] == 'group_size':
-            return self.__calculate_by_criteria(coeval, criteria)
+            return self.__calculate_by_group_size(coeval, criteria)
         elif criteria[0] == 'dist_matrix':
             #TODO implement dist_matrix calculation
             pass
@@ -125,39 +162,4 @@ class FitnessCalculator(object):
                 penalty += abs(median - len(group))
         return penalty * criteria[2]
 
-    @staticmethod
-    def __evaluate_by_criteria(coeval, criteria) -> list:
-        """Evaluate how are the criterias divided between groups
-        in coeval. Based on one criteria.
 
-        Args:
-            coeval (dict): random grouping of persons
-            criteria (list): two values [criteria(str),
-                                         specific criteria(str),
-                                         weight value(float)<0, 1>]
-        Returns:
-            (list): how many persons with needed criteria in group;
-                    index in list corresponds to index of group in
-                    coeval
-        """
-        arranged = []
-        for group in coeval.values():
-            index = 0
-            for person in group:
-                if criteria[0] == "gender":
-                    if person.gender == criteria[1]:
-                        index += 1
-                elif criteria[0] == "study":
-                    if person.study == criteria[1]:
-                        index += 1
-                elif criteria[0] == "university":
-                    if person.university == criteria[1]:
-                        index += 1
-                elif criteria[0] == "nationality":
-                    if person.nationality == criteria[1]:
-                        index += 1
-                elif criteria[0] == "transport":
-                    if person.transport == criteria[1]:
-                        index += 1
-            arranged.append(index)
-        return arranged

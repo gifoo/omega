@@ -17,4 +17,4 @@ class Person():
     def __repr__(self):
         return self.name
         #+ '|' + self.gender + '|' + self.study + '|' + \
-        #        self.nationality + '|' + self.transport + '|' + self.university
+        #self.nationality + '|' + self.transport + '|' + self.university
