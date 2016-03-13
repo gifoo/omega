@@ -41,6 +41,7 @@ class Evolve(object):
 
 if __name__ == '__main__':
     criteria = [
+        #['group_size', None, 1],
         ['gender', 'Male', 1],
     ]
     fg = FirstGeneration(PERSONS, 3, 11)
