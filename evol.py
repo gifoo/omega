@@ -36,18 +36,19 @@ class Evolve(object):
 
     Args:
     """
-    def __init__(self):
+    def __init__(self, persons, criteria, num_of_generations, mutation):
         pass
 
+
+    def start(self, generation, generation_size):
+        """docstring"""
+        pass
+
+
 if __name__ == '__main__':
-    criteria = [
+    crit = [
         #['group_size', None, 1],
         ['gender', 'Male', 1],
     ]
-    fg = FirstGeneration(PERSONS, 3, 11)
-    generation = fg.create_generation()
-    p = pprint.PrettyPrinter()
-    PERSONS = per
-    fc = FitnessCalculator(PERSONS, 3)
-    p.pprint(fc.calculate_fitness(generation, criteria))
+
 

@@ -97,7 +97,6 @@ class FitnessCalculator(object):
             criteria (list): two values [criteria(str),
                                          specific criteria(str),
                                          weight value(float)<0, 1>]
-
         Returns:
             (int): weighted penalty - one criteria
         """
@@ -116,7 +115,6 @@ class FitnessCalculator(object):
             criteria (list): two values [criteria(str),
                                          specific criteria(str),
                                          weight value(float)<0, 1>]
-
         Returns:
             (int): weighted penalty - group size
         """
@@ -137,7 +135,6 @@ class FitnessCalculator(object):
             criteria (list): two values [criteria(str),
                                          specific criteria(str),
                                          weight value(float)<0, 1>]
-
         Returns:
             (list): how many persons with needed criteria in group;
                     index in list corresponds to index of group in
@@ -164,6 +161,3 @@ class FitnessCalculator(object):
                         index += 1
             arranged.append(index)
         return arranged
-
-
-
