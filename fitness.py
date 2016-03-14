@@ -114,7 +114,8 @@ class FitnessCalculator(object):
             # 1/(penalty+1) - keeps the fitness between <0, 1>
             fitness_of_coeval = round(1 / (penalty + 1), 4)
             result.append((fitness_of_coeval, coeval))
-        result.sort(key=lambda tup: tup[0], reverse=True)
+        # do i need sort ?
+        #result.sort(key=lambda tup: tup[0], reverse=True)
         return result
 
     def __fitness_of_coeval(self, coeval: dict, criteria: list) -> int:

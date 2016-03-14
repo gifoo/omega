@@ -45,24 +45,42 @@ class Evolve(object):
         self.criteria = criteria
         self.num_of_generations = num_of_generations
         self._mutation = mutation
-        self.starting_gen = FirstGeneration(persons, 3, 11). \
+        self._gen_size = 11
+        self.starting_gen = FirstGeneration(persons, 3, self._gen_size). \
             create_generation()
         self.p = pprint.PrettyPrinter()
+        self.fc = FitnessCalculator(self.persons, 3)
+        self.gen = self.fc.calculate_fitness(
+            self.starting_gen, self.criteria)
+        self.mut_type = [(80, True), (20, False)]
 
     def start(self):
         """docstring"""
-        gen = FitnessCalculator(self.persons, 3).calculate_fitness(
-            self.starting_gen, self.criteria)
-        self.__handle_data(gen)
-        # print(pick)
+        for index in range(self.num_of_generations):
+            new_gen = self.__select_survivors_and_mutate()
+            self.gen = self.fc.calculate_fitness(new_gen, self.criteria)
+            if index % 20 == 0:
+                temp_res = self.fc.calculate_fitness(new_gen, self.criteria)
+                temp_res.sort(key=lambda tup: tup[0], reverse=True)
+                self.p.pprint(temp_res)
 
-    def __handle_data(self, generation):
-        """docstring"""
-        roulette = self.__roulette_by_fitness(generation)
-        chosen = weighted_choice(roulette)
-        m = Mutate(self._mutation, [(80, True), (20, False)]).start(chosen)
-        print(chosen)
-        print(m)
+    def __select_survivors_and_mutate(self):
+        """
+        Create new generation. Roulette values are defined by fitness.
+        With weighted choice choose one survivor. Apply mutation.
+        Fill up descendants.
+
+        :rtype: list
+        :return: descendants of previous generation
+        """
+        descendants = []
+        while len(descendants) < self._gen_size:
+            roulette = self.__roulette_by_fitness(self.gen)
+            chosen = weighted_choice(roulette)
+            mutate = Mutate(self._mutation, self.mut_type)
+            result_of_mutation = mutate.start(chosen)
+            descendants.append(result_of_mutation)
+        return descendants
 
     def __roulette_by_fitness(self, generation: list) -> list:
         """
@@ -76,6 +94,7 @@ class Evolve(object):
         _sum = self.sum_of_fitness(generation)
         roulette = []
         for fitness, coeval in generation:
+            # *100 to know how much percents from 100%
             roulette.append(((fitness / _sum) * 100, coeval))
         return roulette
 
@@ -100,4 +119,4 @@ if __name__ == "__main__":
         ['group_size', None, 1],
         ["gender", "Male", 1],
     ]
-    Evolve(PERSONS, crit, 20, 100).start()
+    Evolve(PERSONS, crit, 100, 20).start()
