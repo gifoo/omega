@@ -1,10 +1,11 @@
 # coding=utf-8
+"""doc"""
 from person import Person
 from fgen import FirstGeneration
 from fitness import FitnessCalculator
-from mutate import Mutate
+from w_choice import weighted_choice
+from mut import Mutate
 import pprint
-import random
 
 PERSONS = [
     Person(['A', 'Vieden', 'Male', 'Computer Science',
@@ -34,29 +35,9 @@ PERSONS = [
 per = PERSONS[:]
 
 
-def weighted_choice(roulette) -> type:
-    """Choose a survivor from roulette (also represents current
-    generation).
-
-    Args:
-        roulette (list): [(chance, coeval),...]
-    Returns:
-        (type): return second value from tuple in roulette
-    """
-    # error bacause of rounding, get more and less than 100%
-    max_percents = sum(chance for chance, coeval in roulette)
-    pick = random.uniform(0, max_percents)
-    current = 0
-    for chance, coeval in roulette:
-        current += chance
-        if current > pick:
-            return coeval
-
-
 class Evolve(object):
-    """docstring
-
-    Args:
+    """
+    docstring
     """
 
     def __init__(self, persons, criteria, num_of_generations, mutation):
@@ -79,15 +60,18 @@ class Evolve(object):
         """docstring"""
         roulette = self.__roulette_by_fitness(generation)
         chosen = weighted_choice(roulette)
-        Mutate(self._mutation, [(80, True), (20, False)]).start(chosen)
+        m = Mutate(self._mutation, [(80, True), (20, False)]).start(chosen)
+        print(chosen)
+        print(m)
 
-    def __roulette_by_fitness(self, generation) -> list:
-        """Set chance of selection based on fitness.
+    def __roulette_by_fitness(self, generation: list) -> list:
+        """
+        Set chance of selection based on fitness.
 
-        Args:
-            generation (list): tuple(fitness(float), coeval(dict))
-        Returns:
-            (list): [(chance, coeval), ...]
+        :type generation: list
+        :param generation: tuple(fitness(float), coeval(dict))
+        :rtype: list
+        :return: [(chance, coeval), ...]
         """
         _sum = self.sum_of_fitness(generation)
         roulette = []
@@ -96,13 +80,14 @@ class Evolve(object):
         return roulette
 
     @staticmethod
-    def sum_of_fitness(generation) -> float:
-        """Sum of fitness in generation.
+    def sum_of_fitness(generation: list) -> float:
+        """
+        Sum of fitness in generation.
 
-        Args:
-            generation (list): (fitness(float), coeval(dict))
-        Returns:
-            (float): sum fitness
+        :type generation: list
+        :param generation: (fitness(float), coeval(dict))
+        :rtype: float
+        :return: sum of fitness
         """
         result = 0
         for fitness, coeval in generation:

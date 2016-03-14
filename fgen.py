@@ -1,17 +1,22 @@
 # coding=utf-8
+"""doc"""
 import random
 
 
 class FirstGeneration(object):
-    """Assign values and load error handler. Use self.create_generation
-    for getting the first generation.
-
-    Args:
-        persons (list): filled with Person(object)
-        group_size (int): defines how many groups do you want
-        gen_size (int):  size of the generation (eleven is minimum allowed)
     """
-    def __init__(self, persons, group_size, gen_size):
+    Assign values and load error handler. Use self.create_generation
+    for getting the first generation.
+    """
+    def __init__(self, persons: list, group_size: int, gen_size: int):
+        """
+        :type persons: list
+        :param persons: filled with Person(object)
+        :type group_size: int
+        :param group_size: to how many groups we want to divide persons
+        :type gen_size: int
+        :param gen_size: the size of a generation
+        """
         self.__persons = persons
         self.__cache = persons[:]
         self.__group_size = group_size
@@ -19,18 +24,20 @@ class FirstGeneration(object):
         self.__error_handler()
 
     def create_generation(self) -> list:
-        """Create starting point for the evolutionary algorithm.
+        """
+        Create starting point for the evolutionary algorithm.
 
-        Returns:
-             (list): filled with possible groupings
+        :rtype: list
+        :return: filled with possible groupings
         """
         return [self.__grouping() for index in range(self.__gen_size)]
 
     def __grouping(self) -> dict:
-        """Assign persons to group. Yield result.
+        """
+        Assign persons to group. Yield result.
 
-        Returns:
-            (dict): keys - group_index; values - Person(object)
+        :rtype: dict
+        :return: keys - group_index; values - Person(object)
         """
         coeval = {index: [] for index in range(self.__group_size)}
         while self.__persons:
@@ -41,12 +48,12 @@ class FirstGeneration(object):
         return coeval
 
     def __error_handler(self):
-        """Raise uniqe errors.
+        """
+        Handle errors.
 
-        Raises:
-            IOError: - persons are empty
-            ValueError: - group size is smaller/equal to zero
-            ValueError: - generation size is smaller/equal to 10
+        :raises: IOError: - persons are empty
+                 ValueError: - group size is smaller/equal to zero
+                 ValueError: - generation size is smaller/equal to 10
         """
         if not self.__persons:
             raise IOError('Empty persons. Probably did not loaded persons')

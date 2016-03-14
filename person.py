@@ -1,5 +1,5 @@
 # coding=utf-8
-#Only for testing purposes !!!
+"""doc"""
 
 
 class Person():
