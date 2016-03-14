@@ -49,20 +49,24 @@ class Evolve(object):
         self.starting_gen = FirstGeneration(persons, 3, self._gen_size). \
             create_generation()
         self.p = pprint.PrettyPrinter()
-        self.fc = FitnessCalculator(self.persons, 3)
+        self.fc = FitnessCalculator(self.persons, 3, self.criteria)
         self.gen = self.fc.calculate_fitness(
-            self.starting_gen, self.criteria)
+            self.starting_gen)
         self.mut_type = [(80, True), (20, False)]
 
-    def start(self):
-        """docstring"""
+    def start(self, frequency):
+        """
+        Run evolve as many number of generations specified by user. Also
+        checks for print out.
+
+        :type frequency: int
+        :param frequency: how often print out result of evol. algorithm
+        """
         for index in range(self.num_of_generations):
-            new_gen = self.__select_survivors_and_mutate()
-            self.gen = self.fc.calculate_fitness(new_gen, self.criteria)
-            if index % 20 == 0:
-                temp_res = self.fc.calculate_fitness(new_gen, self.criteria)
-                temp_res.sort(key=lambda tup: tup[0], reverse=True)
-                self.p.pprint(temp_res)
+            descendants = self.__select_survivors_and_mutate()
+            self.gen = self.fc.calculate_fitness(descendants)
+            if index % frequency == 0:
+                self.__print_result(descendants)
 
     def __select_survivors_and_mutate(self):
         """
@@ -82,7 +86,7 @@ class Evolve(object):
             descendants.append(result_of_mutation)
         return descendants
 
-    def __roulette_by_fitness(self, generation: list) -> list:
+    def __roulette_by_fitness(self, generation):
         """
         Set chance of selection based on fitness.
 
@@ -99,7 +103,7 @@ class Evolve(object):
         return roulette
 
     @staticmethod
-    def sum_of_fitness(generation: list) -> float:
+    def sum_of_fitness(generation):
         """
         Sum of fitness in generation.
 
@@ -113,10 +117,22 @@ class Evolve(object):
             result += fitness
         return result
 
+    def __print_result(self, descendants):
+        """
+        Handles print of result during evolve. Also sort result for fittest
+        at top.
+
+        :type descendants: list
+        :param descendants: new generation, sort them and print out
+        """
+        res = self.fc.calculate_fitness(descendants)
+        res.sort(key=lambda tup: tup[0], reverse=True)
+        self.p.pprint(res)
+
 
 if __name__ == "__main__":
     crit = [
         ['group_size', None, 1],
         ["gender", "Male", 1],
     ]
-    Evolve(PERSONS, crit, 100, 20).start()
+    Evolve(PERSONS, crit, 100, 20).start(20)

@@ -2,7 +2,7 @@
 import random
 
 
-def weighted_choice(roulette: list) -> type:
+def weighted_choice(roulette):
     """
     Choose a survivor from roulette (also represents current generation).
 

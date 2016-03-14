@@ -8,7 +8,7 @@ class FirstGeneration(object):
     Assign values and load error handler. Use self.create_generation
     for getting the first generation.
     """
-    def __init__(self, persons: list, group_size: int, gen_size: int):
+    def __init__(self, persons, group_size, gen_size):
         """
         :type persons: list
         :param persons: filled with Person(object)
@@ -23,7 +23,7 @@ class FirstGeneration(object):
         self.__gen_size = gen_size
         self.__error_handler()
 
-    def create_generation(self) -> list:
+    def create_generation(self):
         """
         Create starting point for the evolutionary algorithm.
 
@@ -32,7 +32,7 @@ class FirstGeneration(object):
         """
         return [self.__grouping() for index in range(self.__gen_size)]
 
-    def __grouping(self) -> dict:
+    def __grouping(self):
         """
         Assign persons to group. Yield result.
 

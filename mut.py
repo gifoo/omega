@@ -9,7 +9,7 @@ class Mutate(object):
     Handle mutation of coeval. Using deepcopy, because of dict.
     """
 
-    def __init__(self, mutation_rate: int, type_chance: list):
+    def __init__(self, mutation_rate, type_chance):
         """
         :type mutation_rate: int
         :param mutation_rate: chance of mutation in %
@@ -19,7 +19,7 @@ class Mutate(object):
         self.__type_chance = type_chance
         self.__mutation = [(100 - mutation_rate, False), (mutation_rate, True)]
 
-    def start(self, original_coeval: type) -> dict:
+    def start(self, original_coeval):
         """
         Mutate based on a weighted choice.
 
@@ -36,7 +36,7 @@ class Mutate(object):
             mutation_type = weighted_choice(self.__type_chance)
             return self.__mutation_start(coeval, mutation_type)
 
-    def __mutation_start(self, coeval: dict, mutation_type: type) -> dict:
+    def __mutation_start(self, coeval, mutation_type):
         """
         Mutate based on mutation_type. If true switch two persons, if
         false push one person.
@@ -57,7 +57,7 @@ class Mutate(object):
         return coeval
 
     @staticmethod
-    def __two_random_choices(coeval: dict) -> int:
+    def __two_random_choices(coeval):
         """
         Returns two selected groups. While for two different values.
 
@@ -73,7 +73,7 @@ class Mutate(object):
         return choice_one, choice_two
 
     @staticmethod
-    def __switch_two_persons(first: list, second: list):
+    def __switch_two_persons(first, second):
         """
         Swap two persons in a dictionary.
 
@@ -87,7 +87,7 @@ class Mutate(object):
         first[p_one], second[p_two] = second[p_two], first[p_one]
 
     @staticmethod
-    def __push_one_person(first: list, second: list):
+    def __push_one_person(first, second):
         """
         Push person from group to a different group. Delete from first
         group.
