@@ -78,8 +78,6 @@ class FitnessCalculator(object):
             # 1/(penalty+1) - keeps the fitness between <0, 1>
             fitness_of_coeval = round(1 / (penalty + 1), 4)
             result.append((fitness_of_coeval, coeval))
-        # do i need sort ?
-        # result.sort(key=lambda tup: tup[0], reverse=True)
         return result
 
     def __fitness_of_coeval(self, coeval, criteria):
@@ -148,7 +146,7 @@ class FitnessCalculator(object):
         :param counted: people with needed criteria in group [(int),...]
         :type criteria: list
         :param criteria:[criteria(str), specific criteria(str),
-                            weight value(float)<0, 1>]
+                            weight value(float)<0,1>]
         :rtype: int
         :return: weighted penalty - one criteria
         """
@@ -161,13 +159,13 @@ class FitnessCalculator(object):
 
     def __calculate_by_group_size(self, coeval, criteria):
         """
-        Calculate panlty of coeval, based on group size.
+        Calculate penalty of coeval, based on group size.
 
         :type coeval: dict
         :param coeval: grouping of people
         :type criteria: list
         :param criteria: [criteria(str), specific criteria(str),
-                            weight value(float)<0, 1>]
+                            weight value(float)<0,1>]
         :rtype: int
         :return: weighted penalty - group size
         """

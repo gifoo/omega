@@ -40,19 +40,44 @@ class Evolve(object):
     docstring
     """
 
-    def __init__(self, persons, criteria, num_of_generations, mutation):
-        self.persons = persons[:]
+    def __init__(self, persons, criteria, config):
+        """
+        :type persons: list
+        :param persons:
+        :type criteria: list
+        :param criteria:
+        :type config: list
+        :param config:  0 - number of generations
+                        1 - mutation rate in %
+                        2 - to how many groups are we splitting
+                        3 - how many coevals in a generation
+                        4 - occurance of mutation type
+        """
         self.criteria = criteria
-        self.num_of_generations = num_of_generations
-        self._mutation = mutation
-        self._gen_size = 11
-        self.starting_gen = FirstGeneration(persons, 3, self._gen_size). \
-            create_generation()
-        self.p = pprint.PrettyPrinter()
-        self.fc = FitnessCalculator(self.persons, 3, self.criteria)
-        self.gen = self.fc.calculate_fitness(
-            self.starting_gen)
-        self.mut_type = [(80, True), (20, False)]
+        (self.gen_num, self.mut, self.grp_size, self.gen_size,
+         self.mut_type) = config
+        fg = self.__first_generation(persons)
+        self.fc = self.__fitness_calculator(persons)
+        self.first_gen = fg.create_generation()
+        self.gen = self.fc.calculate_fitness(self.first_gen)
+
+    def __first_generation(self, persons):
+        """
+        :type persons: list
+        :param persons: input persons, used for copying
+        :rtype FirstGeneration
+        """
+        copy = persons[:]
+        return FirstGeneration(copy, self.grp_size, self.gen_size)
+
+    def __fitness_calculator(self, persons):
+        """
+        :type persons: list
+        :param persons: input persons, used for copying
+        :rtype: FitnessCalculator
+        """
+        copy = persons[:]
+        return FitnessCalculator(copy, self.grp_size, self.criteria)
 
     def start(self, frequency):
         """
@@ -62,7 +87,7 @@ class Evolve(object):
         :type frequency: int
         :param frequency: how often print out result of evol. algorithm
         """
-        for index in range(self.num_of_generations):
+        for index in range(self.gen_num):
             descendants = self.__select_survivors_and_mutate()
             self.gen = self.fc.calculate_fitness(descendants)
             if index % frequency == 0:
@@ -78,10 +103,10 @@ class Evolve(object):
         :return: descendants of previous generation
         """
         descendants = []
-        while len(descendants) < self._gen_size:
+        while len(descendants) < self.gen_size:
             roulette = self.__roulette_by_fitness(self.gen)
             chosen = weighted_choice(roulette)
-            mutate = Mutate(self._mutation, self.mut_type)
+            mutate = Mutate(self.mut, self.mut_type)
             result_of_mutation = mutate.start(chosen)
             descendants.append(result_of_mutation)
         return descendants
@@ -127,6 +152,7 @@ class Evolve(object):
         """
         res = self.fc.calculate_fitness(descendants)
         res.sort(key=lambda tup: tup[0], reverse=True)
+        self.p = pprint.PrettyPrinter()
         self.p.pprint(res)
 
 
@@ -135,4 +161,5 @@ if __name__ == "__main__":
         ['group_size', None, 1],
         ["gender", "Male", 1],
     ]
-    Evolve(PERSONS, crit, 100, 20).start(20)
+    conf = [100, 20, 3, 11, [(80, True), (20, False)]]
+    Evolve(PERSONS, crit, conf).start(20)
